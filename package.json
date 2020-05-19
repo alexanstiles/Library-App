@@ -42,5 +42,5 @@
   "devDependencies": {
     "dotenv": "^8.2.0",
     "nodemon": "^2.0.2"
-  }
+  },
 }
