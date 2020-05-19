@@ -97,9 +97,9 @@ export default function Main() {
       });
   }
 
+  // THIS FETCH NEEDS REPLACING
   useEffect(() => {
     if (search) {
-      //fetch("/api/books?title=" + search) //to local host
       fetch(
         "https://www.googleapis.com/books/v1/volumes?q=" +
           param +
@@ -119,36 +119,64 @@ export default function Main() {
     }
   }, [button]);
 
+  //
+  // SERVER REWORK AREA
+  //
+
+  // useEffect(() => {
+  //   if (search) {
+  //     //fetch("/api/books?title=the+outlanders") //to local host
+  //     fetch(
+  //       "https://www.googleapis.com/books/v1/volumes?q=" +
+  //         param +
+  //         search +
+  //         "&key=" +
+  //         process.env.REACT_APP_GOOGLE_API_KEY
+  //     )
+  //       .then((res) => res.json())
+  //       .then((res) => {
+  //         const all = res.items;
+  //         console.log(all);
+  //         setData(all);
+  //       })
+  //       .catch((error) => {
+  //         console.error(error);
+  //       });
+  //   }
+  // }, [button]);
+
   function MapData() {
     try {
       if (data && clicked) {
         return (
           <Container className={classes.cardGrid} maxWidth="md">
           <Grid container spacing={4}>
-            {data.map((item) => (
-              <Grid item key={item.id} xs={12} sm={6} md={4}>
-                <Card className={classes.card}>
-                  <CardMedia
-                    className={classes.cardMedia}
-                    image={handleImage(item.volumeInfo)}
-                    title="Image title"
-                  />
-                  <CardContent className={classes.cardContent}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      {item.volumeInfo.title}
-                    </Typography>
-                    <Typography>
-                      Author: {handleAuthor(item.volumeInfo)}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button onClick={() => handleAdd(item)} size="small" color="primary">
-                      Save
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
+            {data.map((item) => {
+              return (
+                <Grid item key={item.id} xs={12} sm={6} md={4}>
+                  <Card className={classes.card}>
+                    <CardMedia
+                      className={classes.cardMedia}
+                      image={handleImage(item.volumeInfo)}
+                      title="Image title"
+                    />
+                    <CardContent className={classes.cardContent}>
+                      <Typography gutterBottom variant="h5" component="h2">
+                        {item.volumeInfo.title}
+                      </Typography>
+                      <Typography>
+                        Author: {handleAuthor(item.volumeInfo)}
+                      </Typography>
+                    </CardContent>
+                    <CardActions>
+                      <Button onClick={() => handleAdd(item)} size="small" color="primary">
+                        Save
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              )
+            })}
           </Grid>
         </Container>
         );

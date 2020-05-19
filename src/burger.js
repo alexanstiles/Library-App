@@ -5,20 +5,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import { useHistory } from "react-router-dom";
+import firebase from "./firebase";
 
 export default function SimpleMenu() {
 
   const history = useHistory();
-
-  const routeChangeA = () =>{ 
-    let path = ``; 
-    history.push(path);
-  }
-
-  const routeChangeB = () =>{ 
-    let path = `collection`; 
-    history.push(path);
-  }
     
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -26,19 +17,19 @@ export default function SimpleMenu() {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handleCloseParam = (props) => {
+    let path = props; 
+    history.push(path);
     setAnchorEl(null);
+  };
+
+  const handleSignout = () => {
+    firebase.auth().signOut().then(function() {
+      // Sign-out successful.
+    }).catch(function(error) {
+      // An error happened.
+    });
   }
-
-  const handleCloseA = () => {
-    routeChangeA();
-    setAnchorEl(null);
-  };
-
-  const handleCloseB = () => {
-    routeChangeB();
-    setAnchorEl(null);
-  };
 
   return (
     <div>
@@ -58,10 +49,11 @@ export default function SimpleMenu() {
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
-        onBlur={handleClose}
+        onBlur={() => setAnchorEl(null)}
       >
-        <MenuItem onClick={handleCloseA}>Home</MenuItem>
-        <MenuItem onClick={handleCloseB}>Collection</MenuItem>
+        <MenuItem onClick={() => handleCloseParam(``)}>Home</MenuItem>
+        <MenuItem onClick={() => handleCloseParam(`collection`)}>Collection</MenuItem>
+        <MenuItem onClick={() => handleSignout()}>Sign out</MenuItem>
       </Menu>
     </div>
   );

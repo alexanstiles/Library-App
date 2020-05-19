@@ -1,56 +1,106 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
+import React, { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Redirect,
+  Switch,
+} from "react-router-dom";
 import Collection from "./collection";
 import Main from "./main";
 import Copyright from "./copyright";
-import Toolbar from "@material-ui/core/Toolbar";
-import AppBar from "@material-ui/core/AppBar";
-import Typography from "@material-ui/core/Typography";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Burger from "./burger";
-import { Grid } from "@material-ui/core";
+import Appbar from "./appbar";
+import firebase from "./firebase";
 
 // use <Router> to change destination
 // <Switch> for stuff like error 404 page
 
 function App() {
+  const [auth, setAuth] = useState(false);
+
+  function newAccount(email, password) {
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .catch(function (error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode);
+        console.log(errorMessage);
+        // ...
+      });
+    if (firebase.auth().currentUser) {
+      setAuth(true);
+    }
+  }
+
+  function signIn(email, password) {
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .catch(function (error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode);
+        console.log(errorMessage);
+        // ...
+      });
+    if (firebase.auth().currentUser) {
+      console.log("yes!")
+      setAuth(true);
+    } else {
+      console.log("user not signed in");
+    }
+  }
+
   return (
     <Router>
-      <AppBar position="relative">
-        <Toolbar>
-          <Grid container direction="row" spacing={10}>
-            <Grid item>
-              <Typography variant="h2" color="inherit" noWrap>
-                Librario
-              </Typography>
-            </Grid>
-            <Grid item style={{marginLeft: 'auto', paddingTop: '48px'}}>
-              <Burger />
-            </Grid>
-          </Grid>
-        </Toolbar>
-      </AppBar>
       <Switch>
         <Route exact path="/login">
-          <div>Sign in</div> 
+          {auth ? (
+            <Redirect to="/" />
+          ) : (
+            <>
+              <div>Sign in!</div>
+              <button onClick={() => signIn("alx@gmail.com", "123456")}>
+                Sign In
+              </button>
+            </>
+          )}
         </Route>
         <Route exact path="/">
-          <CssBaseline />
-          <Main />
-          <footer>
-            <br />
-            <Copyright />
-          </footer>
-          <br />
+          {auth ? (
+            <>
+              <Appbar />
+              <CssBaseline />
+              <Main />
+              <footer>
+                <br />
+                <Copyright />
+              </footer>
+              <br />
+            </>
+          ) : (
+            <Redirect to="/login" />
+          )}
         </Route>
         <Route exact path="/collection">
-          <CssBaseline />
-          <Collection />
-          <footer>
-            <br />
-            <Copyright />
-          </footer>
-          <br />
+          {auth ? (
+            <>
+              <Appbar />
+              <CssBaseline />
+              <Collection />
+              <footer>
+                <br />
+                <Copyright />
+              </footer>
+              <br />
+            </>
+          ) : (
+            <Redirect to="/login" />
+          )}
         </Route>
       </Switch>
     </Router>
